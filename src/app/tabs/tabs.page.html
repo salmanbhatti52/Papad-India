@@ -1,0 +1,42 @@
+<ion-tabs>
+
+  <ion-tab-bar slot="bottom" style="padding: 10px 0px;">
+    <ion-tab-button tab="home">
+      <!-- <ion-icon name="home"></ion-icon> -->
+      <img src="assets/image/cottage.svg">
+      <ion-label>{{'Home' | translate}}</ion-label>
+    </ion-tab-button>
+
+    <!-- <ion-tab-button tab="vendor">
+      <ion-icon src="/assets/icon/storefront.svg"></ion-icon>
+      <ion-label>{{'Store' | translate}}</ion-label>
+    </ion-tab-button> -->
+
+    <ion-tab-button tab="search">
+      <!-- <ion-icon name="search"></ion-icon> -->
+      <img src="assets/image/manage_search.svg">
+      <ion-label>{{'Search' | translate}}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="categories">
+      <!-- <ion-icon name="grid"></ion-icon> -->
+      <img src="assets/image/category.svg">
+      <ion-label>{{'Category' | translate}}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="cart">
+      <!-- <ion-icon name="basket"></ion-icon> -->
+      <img src="assets/image/shopping_cart.svg">
+      <ion-label>{{'Cart' | translate}}</ion-label>
+      <ion-badge color="danger" *ngIf="data.count != 0">{{data.count}}</ion-badge>
+    </ion-tab-button>
+
+    <ion-tab-button tab="account">
+      <!-- <ion-icon name="person"></ion-icon> -->
+      <img src="assets/image/assignment_ind.svg">
+      <ion-label>{{'Account' | translate}}</ion-label>
+    </ion-tab-button>
+
+  </ion-tab-bar>
+
+</ion-tabs>
