@@ -283,30 +283,8 @@
 			[style.margin]="children.margin" [style.padding]="children.padding" class="category">
 			<div *ngIf="data.categories" class="{{children.header_align}}" [style.color]="children.title_color">
 				{{children.title}}</div>
-			<!-- Category Scroll -->
-			<div *ngIf="data.categories && children.style == 'scroll'" class="category-slider-scroll">
-				<div class="scrollmenu2" [ngClass]="{'floating-header': children.header_align == 'left_floating'}">
-					<!-- <div class="scroll-related-products">
-                        <div class="product" *ngFor="let item of getSubCategories(children.link_id)"
-                            [style.width.%]="children.child_width" [style.padding]="children.margin_between">
-                            <ion-card mode="{{settings.settings.mode}}" button="true"
-                                class="ion-activatable ion-focusable hydrated {{settings.settings.product_shadow}}"
-                                [style.border-radius.px]="settings.dimensions.productBorderRadius"
-                                (click)="getCategory(item.id)">
-                                <img *ngIf="item.image?.src" src="{{item.image.src}}">
-                                <ion-card-header>
-                                    <ion-card-title text-center mode="md" [innerHTML]="item.name">{{item.name}}
-                                    </ion-card-title>
-                                </ion-card-header>
-                            </ion-card>
-                        </div>
-                    </div> -->
-				</div>
-			</div>
+
 			<!-- coupan code -->
-
-
-
 			<ion-slides pager="true">
 				<ion-slide *ngFor="let coupan of coupanarray">
 					<div class="coupandiv">
@@ -386,12 +364,36 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Category Scroll -->
+			<div>
+				<p style="color:#000000!important;font-size: 20px;margin: 0px 0px 0px 20px;">Top Categories
+				</p>
+			</div>
+			<div *ngIf="data.categories && children.style == 'scroll'" class="category-slider-scroll">
+				<div class="scrollmenu2" [ngClass]="{'floating-header': children.header_align == 'left_floating'}">
+					<div class="scroll-related-products">
+						<div class="product" *ngFor="let item of getSubCategories(children.link_id)" [style.width.%]="10"
+							[style.padding]="8">
+							<ion-card mode="{{settings.settings.mode}}" button="true"
+								class="ion-activatable ion-focusable hydrated {{settings.settings.product_shadow}}"
+								[style.border-radius.px]="settings.dimensions.productBorderRadius" (click)="getCategory(item.id)">
+								<img *ngIf="item.image?.src" src="{{item.image.src}}">
+								<ion-card-header>
+									<ion-card-title text-center mode="md" [innerHTML]="item.name">{{item.name}}
+									</ion-card-title>
+								</ion-card-header>
+							</ion-card>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- Category Grid -->
 			<!-- <div>
 				<p style="color:#000000!important;font-size: 20px;margin: 0px 0px 0px 20px;">Top Categories
 				</p>
 			</div> -->
-			<div *ngIf="data.categories && children.style == 'scroll'" class="category-slider-grid">
+			<!-- <div *ngIf="data.categories && children.style == 'scroll'" class="category-slider-grid">
 				<ion-row class="row unlimited-items">
 					<div [style.width.%]="children.child_width" [style.padding]="0" [style.padding]="children.margin_between"
 						*ngFor="let item of getSubCategories(children.link_id)">
@@ -411,7 +413,7 @@
 						</ion-col>
 					</div>
 				</ion-row>
-			</div>
+			</div> -->
 		</div>
 
 	</div>
