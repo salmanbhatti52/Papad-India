@@ -1,10 +1,11 @@
 <ion-tabs>
 
   <ion-tab-bar slot="bottom" style="padding: 10px 0px;">
-    <ion-tab-button tab="home">
+    <ion-tab-button tab="home" (click)="home('home')">
       <!-- <ion-icon name="home"></ion-icon> -->
       <img src="assets/image/cottage.svg">
       <ion-label>{{'Home' | translate}}</ion-label>
+      <hr *ngIf="t1==true">
     </ion-tab-button>
 
     <!-- <ion-tab-button tab="vendor">
@@ -12,29 +13,33 @@
       <ion-label>{{'Store' | translate}}</ion-label>
     </ion-tab-button> -->
 
-    <ion-tab-button tab="search">
+    <ion-tab-button tab="search" (click)="search('search')">
       <!-- <ion-icon name="search"></ion-icon> -->
       <img src="assets/image/manage_search.svg">
       <ion-label>{{'Search' | translate}}</ion-label>
+      <hr *ngIf="t2==true">
     </ion-tab-button>
 
-    <ion-tab-button tab="categories">
+    <ion-tab-button tab="categories" (click)="categories('categories')">
       <!-- <ion-icon name="grid"></ion-icon> -->
       <img src="assets/image/category.svg">
       <ion-label>{{'Category' | translate}}</ion-label>
+      <hr *ngIf="t3==true">
     </ion-tab-button>
 
-    <ion-tab-button tab="cart">
+    <ion-tab-button tab="cart" (click)="cart('cart')">
       <!-- <ion-icon name="basket"></ion-icon> -->
       <img src="assets/image/shopping_cart.svg">
       <ion-label>{{'Cart' | translate}}</ion-label>
       <ion-badge color="danger" *ngIf="data.count != 0">{{data.count}}</ion-badge>
+      <hr *ngIf="t4==true">
     </ion-tab-button>
 
-    <ion-tab-button tab="account">
+    <ion-tab-button tab="account" (click)="account('account')">
       <!-- <ion-icon name="person"></ion-icon> -->
       <img src="assets/image/assignment_ind.svg">
       <ion-label>{{'Account' | translate}}</ion-label>
+      <hr *ngIf="t5==true">
     </ion-tab-button>
 
   </ion-tab-bar>

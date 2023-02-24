@@ -1,5 +1,7 @@
-ion-searchbar {
+ion-searchbar{
     //height: 40px;
+    --background: #A9C3B27A !important;
+    color: #fff;
 }
 ion-content {
     --background: var(--ion-color-background, #f2f2f2);

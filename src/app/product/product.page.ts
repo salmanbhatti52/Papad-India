@@ -172,7 +172,7 @@ export class ProductPage {
 		const toast = await this.toastController.create({
 			message: message.replace(/<[^>]*>/g, ''),
 			duration: 2000,
-			position: 'top'
+			// position: 'top'
 		});
 		toast.present();
 	}
