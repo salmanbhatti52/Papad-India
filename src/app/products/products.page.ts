@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavController, ModalController  } from '@ionic/angular';
+import { NavController, ModalController, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api.service';
 import { Data } from '../data';
@@ -33,10 +33,11 @@ export class ProductsPage {
     lan: any = {};
     variationId: any;
     gridView: boolean = true;
-    imagesarray=[];
-  image: any;
+    imagesarray = [];
+    image: any;
 
-    constructor(public config: Config, public alertController: AlertController, public translate: TranslateService, public vendor: Vendor, public modalController: ModalController, public api: ApiService, public data: Data, public product: Product, public settings: Settings, public router: Router, public navCtrl: NavController, public route: ActivatedRoute) {
+    results: any;
+    constructor(public config: Config, public alertController: AlertController, public translate: TranslateService, public vendor: Vendor, public modalController: ModalController, public api: ApiService, public data: Data, public product: Product, public settings: Settings, public router: Router, public navCtrl: NavController, public route: ActivatedRoute, public toastctrl: ToastController) {
         this.filter.page = 1;
         this.filter.status = 'publish';
         this.options.quantity = 1;
@@ -76,8 +77,8 @@ export class ProductsPage {
         this.api.postItem('products', this.filter).then(res => {
             console.log(res);
             this.products = res;
-          
-            
+
+
             this.loader = false;
         }, err => {
             console.log(err);
@@ -93,13 +94,13 @@ export class ProductsPage {
         });
     }
     ngOnInit() {
-        if(this.route.snapshot.paramMap.get('id')){
+        if (this.route.snapshot.paramMap.get('id')) {
             this.filter.id = this.route.snapshot.paramMap.get('id');
         }
-        if(this.vendor.vendor.id){
+        if (this.vendor.vendor.id) {
             this.filter.vendor = this.vendor.vendor.id ? this.vendor.vendor.id : this.vendor.vendor.ID;
         }
-        if(this.vendor.vendor.wcpv_product_vendors) {
+        if (this.vendor.vendor.wcpv_product_vendors) {
             delete this.filter.vendor;
             this.filter.wcpv_product_vendors = this.vendor.vendor.wcpv_product_vendors;
         }
@@ -112,27 +113,27 @@ export class ProductsPage {
                     //     let imgSrc = `assets/image/upload_placeholder.png`;
                     // }
                 }
-               
+
             }
-           
-           
-            console.log('subcategories====',this.subCategories);
-            
+
+
+            console.log('subcategories====', this.subCategories);
+
         }
         if (this.settings.colWidthProducts == 4) this.filter.per_page = 15;
         this.getProducts();
         this.getAttributes();
 
-        this.translate.get(['Oops!', 'Please Select', 'Please wait', 'Options', 'Option', 'Select', 'Item added to cart', 'Message', 'Requested quantity not available'  ]).subscribe(translations => {
-          this.lan.oops = translations['Oops!'];
-          this.lan.PleaseSelect = translations['Please Select'];
-          this.lan.Pleasewait = translations['Please wait'];
-          this.lan.options = translations['Options'];
-          this.lan.option = translations['Option'];
-          this.lan.select = translations['Select'];
-          this.lan.addToCart = translations['Item added to cart'];
-          this.lan.message = translations['Message'];
-          this.lan.lowQuantity = translations['Requested quantity not available'];
+        this.translate.get(['Oops!', 'Please Select', 'Please wait', 'Options', 'Option', 'Select', 'Item added to cart', 'Message', 'Requested quantity not available']).subscribe(translations => {
+            this.lan.oops = translations['Oops!'];
+            this.lan.PleaseSelect = translations['Please Select'];
+            this.lan.Pleasewait = translations['Please wait'];
+            this.lan.options = translations['Options'];
+            this.lan.option = translations['Option'];
+            this.lan.select = translations['Select'];
+            this.lan.addToCart = translations['Item added to cart'];
+            this.lan.message = translations['Message'];
+            this.lan.lowQuantity = translations['Requested quantity not available'];
         });
     }
     getProduct(product) {
@@ -144,11 +145,11 @@ export class ProductsPage {
         var path = this.router.url.substring(0, endIndex);
         this.navCtrl.navigateForward(path + '/' + id);
     }
-    loaded(product){
+    loaded(product) {
         console.log('Loaded');
         product.loaded = true;
     }
-    onInput(){
+    onInput() {
         if (this.searchInput.length) {
             this.products = [];
             this.filter.q = this.searchInput;
@@ -161,7 +162,7 @@ export class ProductsPage {
             this.getProducts();
         }
     }
-    ionViewWillLeave(){
+    ionViewWillLeave() {
         this.showSearch = false;
     }
     ionViewDidLeave() {
@@ -173,27 +174,55 @@ export class ProductsPage {
     }
 
     async addToCart(product) {
-        if(product.manage_stock && product.stock_quantity < this.data.cart[product.id]) {
+        if (product.manage_stock && product.stock_quantity < this.data.cart[product.id]) {
             this.presentAlert(this.lan.message, this.lan.lowQuantity);
-        } else if (product.type == 'variable') {
-            this.getProduct(product);
         }
         else if (this.setVariations(product)) {
+            if (product.type != 'grouped') {
+                this.options.quantity = "1";
+            }
+            this.options.product_id = product.id;
+            await this.api.addcart('add_to_cart', this.options).then(res => {
+                this.results = res;
+                if (this.results.error) {
+                    this.presentToast(this.results.notice);
+                } else {
+                    this.cart = res;
+                    console.log(this.cart);
 
-          if (this.data.cart[product.id] != undefined) this.data.cart[product.id] += 1;
-          else this.data.cart[product.id] = 1;
+                    this.presentToast(this.lan.addToCart);
+                    this.data.updateCart(this.cart.cart);
+                }
 
-          this.options.product_id = product.id;
-          await this.api.postItem('add_to_cart', this.options).then(res => {
-              this.cart = res;
-              this.data.updateCart(this.cart.cart);
-          }, err => {
-              console.log(err);
-          });
-        }  
+            }, err => {
+                console.log(err);
+
+            });
+        }
+        // old code
+        // if (product.manage_stock && product.stock_quantity < this.data.cart[product.id]) {
+        //     this.presentAlert(this.lan.message, this.lan.lowQuantity);
+        // } else if (product.type == 'variable') {
+        //     this.getProduct(product);
+        // }
+        // else if (this.setVariations(product)) {
+
+        //     if (this.data.cart[product.id] != undefined) this.data.cart[product.id] += 1;
+        //     else this.data.cart[product.id] = 1;
+
+        //     this.options.product_id = product.id;
+        //     await this.api.postItem('add_to_cart', this.options).then(res => {
+        //         this.cart = res;
+        //         console.log(this.cart);
+        //         this.presentToast(this.lan.addToCart)
+        //         this.data.updateCart(this.cart.cart);
+        //     }, err => {
+        //         console.log(err);
+        //     });
+        // }
     }
     setVariations(product) {
-        if(product.variationId){
+        if (product.variationId) {
             this.options.variation_id = product.variationId;
         }
         product.attributes.forEach(item => {
@@ -203,7 +232,7 @@ export class ProductsPage {
         })
         for (var i = 0; i < product.attributes.length; i++) {
             if (product.type == 'variable' && product.attributes[i].variation && product.attributes[i].selected == undefined) {
-                this.presentAlert(this.lan.options, this.lan.select +' '+ product.attributes[i].name +' '+ this.lan.option);
+                this.presentAlert(this.lan.options, this.lan.select + ' ' + product.attributes[i].name + ' ' + this.lan.option);
                 return false;
             }
         }
@@ -217,59 +246,59 @@ export class ProductsPage {
         });
         await alert.present();
     }
-    async updateToCart(product){
+    async updateToCart(product) {
         var params: any = {};
-        if(product.manage_stock && product.stock_quantity < this.data.cart[product.id]) {
+        if (product.manage_stock && product.stock_quantity < this.data.cart[product.id]) {
             this.presentAlert(this.lan.message, this.lan.lowQuantity);
         } else {
-          for (let key in this.data.cartItem) {
-            if (this.data.cartItem[key].product_id == product.id) {
-                  if (this.data.cartItem[key].quantity != undefined && this.data.cartItem[key].quantity == 0) {
-                      this.data.cartItem[key].quantity = 0
-                  }
-                  else {
-                      this.data.cartItem[key].quantity += 1
-                  };
-                  if (this.data.cart[product.id] != undefined && this.data.cart[product.id] == 0) {
-                      this.data.cart[product.id] = 0
-                  }
-                  else {
-                      this.data.cart[product.id] += 1
-                  };
-                  params.key = key;
-                  params.quantity = this.data.cartItem[key].quantity;
-            }      
-          }
-          params.update_cart = 'Update Cart';
-          params._wpnonce = this.data.cartNonce;
-          await this.api.postItem('update-cart-item-qty', params).then(res => {
-              this.cart = res;
-              this.data.updateCart(this.cart.cart_contents);
-          }, err => {
-              console.log(err);
-          });
+            for (let key in this.data.cartItem) {
+                if (this.data.cartItem[key].product_id == product.id) {
+                    if (this.data.cartItem[key].quantity != undefined && this.data.cartItem[key].quantity == 0) {
+                        this.data.cartItem[key].quantity = 0
+                    }
+                    else {
+                        this.data.cartItem[key].quantity += 1
+                    };
+                    if (this.data.cart[product.id] != undefined && this.data.cart[product.id] == 0) {
+                        this.data.cart[product.id] = 0
+                    }
+                    else {
+                        this.data.cart[product.id] += 1
+                    };
+                    params.key = key;
+                    params.quantity = this.data.cartItem[key].quantity;
+                }
+            }
+            params.update_cart = 'Update Cart';
+            params._wpnonce = this.data.cartNonce;
+            await this.api.postItem('update-cart-item-qty', params).then(res => {
+                this.cart = res;
+                this.data.updateCart(this.cart.cart_contents);
+            }, err => {
+                console.log(err);
+            });
         }
     }
-    async deleteFromCart(product){
+    async deleteFromCart(product) {
         var params: any = {};
         for (let key in this.data.cartItem) {
-          if (this.data.cartItem[key].product_id == product.id) {
-            if (this.data.cartItem[key].quantity != undefined && this.data.cartItem[key].quantity == 0) {
-                this.data.cartItem[key].quantity = 0;
+            if (this.data.cartItem[key].product_id == product.id) {
+                if (this.data.cartItem[key].quantity != undefined && this.data.cartItem[key].quantity == 0) {
+                    this.data.cartItem[key].quantity = 0;
+                }
+                else {
+                    this.data.cartItem[key].quantity -= 1;
+                };
+                if (this.data.cart[product.id] != undefined && this.data.cart[product.id] == 0) {
+                    this.data.cart[product.id] = 0
+                }
+                else {
+                    this.data.cart[product.id] -= 1
+                };
+                params.key = key;
+                params.quantity = this.data.cartItem[key].quantity;
             }
-            else {
-                this.data.cartItem[key].quantity -= 1;
-            };
-            if (this.data.cart[product.id] != undefined && this.data.cart[product.id] == 0) {
-                this.data.cart[product.id] = 0
-            }
-            else {
-                this.data.cart[product.id] -= 1
-            };
-            params.key = key;
-            params.quantity = this.data.cartItem[key].quantity;
-          }      
-        }    
+        }
         params.update_cart = 'Update Cart';
         params._wpnonce = this.data.cartNonce;
         await this.api.postItem('update-cart-item-qty', params).then(res => {
@@ -286,5 +315,14 @@ export class ProductsPage {
         let source = ev.srcElement;
         let imgSrc = `assets/image/upload_placeholder.png`;
         source.src = imgSrc;
-      }
+    }
+
+    async presentToast(message) {
+        const toast = await this.toastctrl.create({
+            message: message.replace(/<[^>]*>/g, ''),
+            duration: 2000,
+            // position: 'top'
+        });
+        toast.present();
+    }
 }

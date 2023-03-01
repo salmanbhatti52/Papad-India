@@ -158,6 +158,8 @@ export class ProductPage {
 					this.presentToast(this.results.notice);
 				} else {
 					this.cart = res;
+					console.log(this.cart);
+
 					this.presentToast(this.lan.addToCart);
 					this.data.updateCart(this.cart.cart);
 				}

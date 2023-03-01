@@ -31,7 +31,7 @@ export class CheckoutPage implements OnInit {
     orderId: any;
     cardResponse: any = {};
     stripeForm: any = {};
-    constructor(private oneSignal: OneSignal, public toastController: ToastController, public platform: Platform, public api: ApiService, public checkoutData: CheckoutData, public settings: Settings, public router: Router, public iab: InAppBrowser, public loadingController: LoadingController, public navCtrl: NavController, public route: ActivatedRoute/*, private braintree: Braintree*/) {}
+    constructor(private oneSignal: OneSignal, public toastController: ToastController, public platform: Platform, public api: ApiService, public checkoutData: CheckoutData, public settings: Settings, public router: Router, public iab: InAppBrowser, public loadingController: LoadingController, public navCtrl: NavController, public route: ActivatedRoute/*, private braintree: Braintree*/) { }
     ngOnInit() {
         this.updateOrder();
 
@@ -47,7 +47,7 @@ export class CheckoutPage implements OnInit {
         this.setOldWooCommerceVersionData();
         await this.api.updateOrderReview('update_order_review', this.checkoutData.form).then(res => {
             this.orderReview = res;
-            if(this.orderReview.payment && this.orderReview.payment.stripe) {
+            if (this.orderReview.payment && this.orderReview.payment.stripe) {
                 this.stripe = Stripe(this.orderReview.payment.stripe.publishable_key);
             }
         }, err => {
@@ -69,7 +69,7 @@ export class CheckoutPage implements OnInit {
             console.log(err);
         });
     }
-    setOldWooCommerceVersionData(){
+    setOldWooCommerceVersionData() {
         this.checkoutData.form.city = this.checkoutData.form.billing_city;
         this.checkoutData.form.postcode = this.checkoutData.form.billing_postcode;
         this.checkoutData.form.country = this.checkoutData.form.billing_country;
@@ -96,26 +96,28 @@ export class CheckoutPage implements OnInit {
                 this.checkoutData.form.onesignal_user_id = data.userId;
             });
         }
-            
-        if (this.checkoutData.form.payment_method == 'authnet'){
+
+        if (this.checkoutData.form.payment_method == 'authnet') {
             this.checkoutData.form['authnet-card-expiry'] = this.checkoutData.form.expiryMonth + ' / ' + this.checkoutData.form.expiryYear;
         }
 
-        if (this.checkoutData.form.payment_method == 'stripe'){
+        if (this.checkoutData.form.payment_method == 'stripe') {
             this.setStripeForm();
             await this.api.getExternalData('https://api.stripe.com/v1/tokens', this.stripeForm).then(res => {
                 this.handleStipeToken(res);
-            }, err => { 
-                if(err.error.error.message)
-                this.errorMessage = err.error.error.message;
+            }, err => {
+                if (err.error.error.message)
+                    this.errorMessage = err.error.error.message;
                 this.disableButton = false;
-                });
+            });
         } /*else if (this.checkoutData.form.payment_method == 'braintree_credit_card'){
             this.brainTreePayment();
         }*/
         else {
             await this.api.ajaxCall('/checkout?wc-ajax=checkout', this.checkoutData.form).then(res => {
                 this.results = res;
+                console.log(this.results);
+
                 this.handleOrder();
             }, err => {
                 this.disableButton = false;
@@ -124,6 +126,7 @@ export class CheckoutPage implements OnInit {
         }
     }
     handleOrder() {
+        alert('handle order');
         if (this.results.result == 'success') {
             if (this.checkoutData.form.payment_method == 'wallet' || this.checkoutData.form.payment_method == 'paypalpro' || this.checkoutData.form.payment_method == 'stripe' || this.checkoutData.form.payment_method == 'bacs' || this.checkoutData.form.payment_method == 'cheque' || this.checkoutData.form.payment_method == 'cod' || this.checkoutData.form.payment_method == 'authnet') {
                 this.orderSummary(this.results.redirect);
@@ -139,9 +142,9 @@ export class CheckoutPage implements OnInit {
                 this.handleRazorPayment();
             } else if (this.checkoutData.form.payment_method == 'peach-payments') {
                 this.handleEFTSECURE();
-            } 
+            }
             else this.handlePayment();
-        } 
+        }
         else if (this.results.result == 'failure') {
             this.disableButton = false;
             this.errorMessage = this.results.messages;
@@ -152,7 +155,7 @@ export class CheckoutPage implements OnInit {
         let browser = this.iab.create(this.results.redirect, '_blank', options);
         browser.show();
         browser.on('loadstart').subscribe(data => {
-            if (data.url.indexOf('/order-received/') != -1  && data.url.indexOf('key=wc_order_') != -1) {
+            if (data.url.indexOf('/order-received/') != -1 && data.url.indexOf('key=wc_order_') != -1) {
                 this.orderSummary(data.url);
                 browser.hide();
             } else if (data.url.indexOf('cancel_order=true') != -1 || data.url.indexOf('cancelled=1') != -1 || data.url.indexOf('cancelled') != -1) {
@@ -171,16 +174,16 @@ export class CheckoutPage implements OnInit {
         var pos1 = str.lastIndexOf("/order-pay/");
         var pos2 = str.lastIndexOf("/?key=wc_order");
         var pos3 = pos2 - (pos1 + 11);
-        this.orderId = str.substr(pos1 + 11, pos3);  
+        this.orderId = str.substr(pos1 + 11, pos3);
         var browserActive = false;
         browser.on('loadstart').subscribe(data => {
             if (data.url.indexOf('payu/checkout') != -1 && !browserActive) {
                 browserActive = true;
                 browser.show();
-            } 
+            }
             else if (data.url.indexOf('payment/postBackParam') != -1) {
-                if(this.orderId)
-                this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
+                if (this.orderId)
+                    this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
                 browser.hide();
             } else if (data.url.indexOf('cancel_order=true') != -1 || data.url.indexOf('cancelled=1') != -1 || data.url.indexOf('cancelled') != -1) {
                 browser.close();
@@ -199,21 +202,21 @@ export class CheckoutPage implements OnInit {
             var pos2 = str.lastIndexOf("/?key=wc_order");
             var pos3 = pos2 - (pos1 + 10);
             order_id = str.substr(pos1 + 10, pos3);
-        } else if(str.indexOf('order-received=') != -1) {
+        } else if (str.indexOf('order-received=') != -1) {
             var pos1 = str.lastIndexOf("order-received=");
             var pos2 = str.lastIndexOf("&key=wc_order");
             var pos3 = pos2 - (pos1 + 15);
             order_id = str.substr(pos1 + 15, pos3);
         }
-        this.navCtrl.navigateRoot('/order-summary/' + order_id); 
-        
+        this.navCtrl.navigateRoot('/order-summary/' + order_id);
+
     }
     handlePayment() {
         var options = "location=no,hidden=yes,toolbar=no,hidespinner=yes";
         let browser = this.iab.create(this.results.redirect, '_blank', options);
         browser.show();
         browser.on('loadstart').subscribe(data => {
-            if (data.url.indexOf('/order-received/') != -1  && data.url.indexOf('key=wc_order_') != -1) {
+            if (data.url.indexOf('/order-received/') != -1 && data.url.indexOf('key=wc_order_') != -1) {
                 this.orderSummary(data.url);
                 browser.hide();
             } else if (data.url.indexOf('cancel_order=true') != -1 || data.url.indexOf('cancelled=1') != -1 || data.url.indexOf('cancelled') != -1) {
@@ -234,7 +237,7 @@ export class CheckoutPage implements OnInit {
             browser.insertCSS({ code: "body{visibility: hidden;}" });
             browser.insertCSS({ code: ".page{visibility: initial;}" });
 
-            if (data.url.indexOf('/order-received/') != -1  && data.url.indexOf('key=wc_order_') != -1) {
+            if (data.url.indexOf('/order-received/') != -1 && data.url.indexOf('key=wc_order_') != -1) {
                 this.orderSummary(data.url);
                 browser.hide();
             } else if (data.url.indexOf('cancel_order=true') != -1 || data.url.indexOf('cancelled=1') != -1 || data.url.indexOf('cancelled') != -1) {
@@ -256,16 +259,16 @@ export class CheckoutPage implements OnInit {
         var pos1 = str.lastIndexOf("/order-pay/");
         var pos2 = str.lastIndexOf("/?key=wc_order");
         var pos3 = pos2 - (pos1 + 11);
-        this.orderId = str.substr(pos1 + 11, pos3);  
+        this.orderId = str.substr(pos1 + 11, pos3);
         var browserActive = false;
         browser.on('loadstart').subscribe(data => {
             if (data.url.indexOf('payumoney.com/transact') != -1 && !browserActive) {
                 browserActive = true;
                 browser.show();
-            } 
+            }
             else if (data.url.indexOf('/order-received/') != -1 && data.url.indexOf('key=wc_order_') != -1) {
-                if(this.orderId)
-                this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
+                if (this.orderId)
+                    this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
                 browser.hide();
             } else if (data.url.indexOf('cancel_order=true') != -1 || data.url.indexOf('cancelled=1') != -1 || data.url.indexOf('cancelled') != -1) {
                 browser.close();
@@ -290,10 +293,10 @@ export class CheckoutPage implements OnInit {
                 if ((data.url.indexOf('securegw-stage.paytm.in/theia') != -1 || data.url.indexOf('processTransaction') != -1) && !browserActive) {
                     browserActive = true;
                     browser.show();
-                } 
+                }
                 else if (data.url.indexOf('type=success') != -1) {
-                    if(this.orderId)
-                    this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
+                    if (this.orderId)
+                        this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
                     browser.hide();
                 }
                 else if (data.url.indexOf('type=error') != -1 || data.url.indexOf('Failed') != -1 || data.url.indexOf('cancel_order=true') != -1 || data.url.indexOf('cancelled') != -1) {
@@ -303,7 +306,7 @@ export class CheckoutPage implements OnInit {
                 else if (data.url.indexOf('Thank+you+for+your+order') != -1) {
                     browser.close();
                     this.disableButton = false;
-                }     
+                }
             });
             browser.on('exit').subscribe(data => {
                 this.disableButton = false;
@@ -329,7 +332,7 @@ export class CheckoutPage implements OnInit {
                     browser.close();
                     this.disableButton = false;
                     this.navCtrl.navigateRoot('/order-summary/' + this.orderId);
-                }     
+                }
             });
             browser.on('exit').subscribe(data => {
                 this.disableButton = false;
@@ -340,13 +343,13 @@ export class CheckoutPage implements OnInit {
             this.disableButton = false;
         }
     }
-    onChangePayment(){
+    onChangePayment() {
         this.disableButton = false;
-        if((/*this.checkoutData.form.payment_method == 'stripe' || */this.checkoutData.form.payment_method == 'paypalpro') && this.platform.is('cordova')){
-           // this.enterCard();
+        if ((/*this.checkoutData.form.payment_method == 'stripe' || */this.checkoutData.form.payment_method == 'paypalpro') && this.platform.is('cordova')) {
+            // this.enterCard();
         }
     }
-    setStripeForm(){
+    setStripeForm() {
         this.stripeForm.key = this.orderReview.payment.stripe.publishable_key;
         this.stripeForm.payment_user_agent = 'stripe.js/6ea8d55';
         this.stripeForm['card[number]'] = this.cardResponse.cardNumber;//'4242424242424242';//this.cardResponse.cardNumber;
@@ -362,18 +365,18 @@ export class CheckoutPage implements OnInit {
         this.stripeForm['card[address_country]'] = this.checkoutData.form.billing_country;
         return true;
     }
-    handleStipeToken(token){
-        if(token && token.id){
-            var form = { type: 'card', token: '', key: ''};
+    handleStipeToken(token) {
+        if (token && token.id) {
+            var form = { type: 'card', token: '', key: '' };
             form.type = 'card';
             form.token = token.id;
             form.key = this.orderReview.payment.stripe.publishable_key;
             this.checkoutData.form['wc-stripe-payment-token'] = token.id; //For Existing Cards add api
             this.api.getExternalData('https://api.stripe.com/v1/sources', form).then(res => {
                 this.stripePlaceOrder(res);
-            }, err => { 
-                if(err.error.error.message)
-                this.errorMessage = err.error.error.message;
+            }, err => {
+                if (err.error.error.message)
+                    this.errorMessage = err.error.error.message;
                 this.disableButton = false;
             });
         } else {
@@ -381,8 +384,8 @@ export class CheckoutPage implements OnInit {
             this.errorMessage = 'Cannot handle payment, Please check card details';
         }
     }
-    stripePlaceOrder(src){
-        if(src && src.id){
+    stripePlaceOrder(src) {
+        if (src && src.id) {
             this.checkoutData.form['stripe_source'] = src.id;
             this.api.ajaxCall('/checkout?wc-ajax=checkout', this.checkoutData.form).then(res => {
                 this.results = res;
@@ -399,7 +402,7 @@ export class CheckoutPage implements OnInit {
     isEmptyObject(obj) {
         return Object.keys(obj).length === 0;
     }
-    onUseNewCard(){
+    onUseNewCard() {
         this.setupStripe();
     }
     setupStripe() {
@@ -424,7 +427,7 @@ export class CheckoutPage implements OnInit {
             style: style
         });
         this.cardElement.mount('#card-element');
-        
+
         //this.card.mount('#card-element');
         var form = document.getElementById('payment-form');
         console.log('test start');
@@ -463,7 +466,7 @@ export class CheckoutPage implements OnInit {
                 this.checkoutData.form.shipping_state = this.checkoutData.form.billing_state;
                 this.checkoutData.form.shipping_postcode = this.checkoutData.form.billing_postcode;
             }
-            
+
             this.loading = this.loadingController.create({});
             this.loading.present();
             this.buttonSubmit = true;
@@ -496,41 +499,41 @@ export class CheckoutPage implements OnInit {
             },
         };
         if (!this.checkoutData.form.shipping) {
-                this.checkoutData.form.shipping_first_name = this.checkoutData.form.billing_first_name;
-                this.checkoutData.form.shipping_last_name = this.checkoutData.form.billing_last_name;
-                this.checkoutData.form.shipping_company = this.checkoutData.form.billing_company;
-                this.checkoutData.form.shipping_address_1 = this.checkoutData.form.billing_address_1;
-                this.checkoutData.form.shipping_address_2 = this.checkoutData.form.billing_address_2;
-                this.checkoutData.form.shipping_city = this.checkoutData.form.billing_city;
-                this.checkoutData.form.shipping_country = this.checkoutData.form.billing_country;
-                this.checkoutData.form.shipping_state = this.checkoutData.form.billing_state;
-                this.checkoutData.form.shipping_postcode = this.checkoutData.form.billing_postcode;
+            this.checkoutData.form.shipping_first_name = this.checkoutData.form.billing_first_name;
+            this.checkoutData.form.shipping_last_name = this.checkoutData.form.billing_last_name;
+            this.checkoutData.form.shipping_company = this.checkoutData.form.billing_company;
+            this.checkoutData.form.shipping_address_1 = this.checkoutData.form.billing_address_1;
+            this.checkoutData.form.shipping_address_2 = this.checkoutData.form.billing_address_2;
+            this.checkoutData.form.shipping_city = this.checkoutData.form.billing_city;
+            this.checkoutData.form.shipping_country = this.checkoutData.form.billing_country;
+            this.checkoutData.form.shipping_state = this.checkoutData.form.billing_state;
+            this.checkoutData.form.shipping_postcode = this.checkoutData.form.billing_postcode;
+        }
+        this.buttonSubmit = true;
+        this.PlaceOrder = "Placing Order";
+        this.loading = await this.loadingController.create({
+            message: 'Loading...',
+            translucent: true,
+            animated: true,
+            backdropDismiss: true
+        });
+        await this.loading.present();
+        this.stripe.createSource(this.cardElement, ownerInfo).then((result) => {
+            if (result.error) {
+                this.loading.dismiss();
+                // Inform the user if there was an error
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                this.checkoutData.form.stripe_source = result.source.id;
+                this.stripNewPayment();
             }
-            this.buttonSubmit = true;
-            this.PlaceOrder = "Placing Order";
-            this.loading = await this.loadingController.create({
-                message: 'Loading...',
-                translucent: true,
-                animated: true,
-                backdropDismiss: true
-            });
-            await this.loading.present();
-            this.stripe.createSource(this.cardElement, ownerInfo).then((result) => {
-                if (result.error) {
-                    this.loading.dismiss();
-                    // Inform the user if there was an error
-                    var errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                } else {
-                    this.checkoutData.form.stripe_source = result.source.id;
-                    this.stripNewPayment();
-                }
-            });
+        });
     }
     async stripNewPayment() {
 
         //IF for new Card Payment
-        if(this.checkoutData.form.card){
+        if (this.checkoutData.form.card) {
             this.checkoutData.form['wc-stripe-payment-token'] = 'new';
         }
 
@@ -572,10 +575,10 @@ export class CheckoutPage implements OnInit {
                             var order_id = str.substr(pos1 + 13, pos3);
                             this.api.ajaxCall('/?wc-ajax=wc_stripe_verify_intent&order=' + order_id + '&nonce=' + this.checkoutData.form.stripe_confirm_pi + '&redirect_to=').then(res => {
                                 this.navCtrl.navigateRoot('/order-summary/' + order_id);
-                            }, err => { 
-                                
+                            }, err => {
+
                             });
-                            
+
                         }
                     });
                 } else if (this.stripeStatus.redirect.indexOf('order-received') != -1 && this.stripeStatus.redirect.indexOf('key=wc_order') != -1) {
@@ -598,17 +601,17 @@ export class CheckoutPage implements OnInit {
             console.log(err);
         });
 
-    
+
     }
-async presentToast(message) {
+    async presentToast(message) {
         const toast = await this.toastController.create({
-          message: message,
-          duration: 2000,
-          position: 'top'
+            message: message,
+            duration: 2000,
+            position: 'top'
         });
         toast.present();
     }
-    brainTreePayment(){
+    brainTreePayment() {
 
         /*console.log('Braintree payment.......');
         

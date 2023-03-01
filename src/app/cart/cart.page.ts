@@ -39,6 +39,8 @@ export class CartPage {
     async getCart() {
         await this.api.getcart('cart').then(res => {
             this.cart = res;
+            console.log(this.cart);
+
             this.data.updateCart(this.cart.cart_contents);
         }, err => {
             console.log(err);

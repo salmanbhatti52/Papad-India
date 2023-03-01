@@ -65,7 +65,7 @@
                 </ion-input>
             </ion-item>
 
-            <ion-item *ngIf="checkoutData.form?.countries && checkoutData.form?.countries.length > 1">
+            <ion-item>
                 <ion-label>{{"Country" | translate}}</ion-label>
                 <ion-select [(ngModel)]="checkoutData.form.billing_country" (ngModelChange)="getBillingRegion()"
                     name="billing_country">

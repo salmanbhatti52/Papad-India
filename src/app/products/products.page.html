@@ -34,11 +34,11 @@
         [style.padding.px]="settings.dimensions.productPadding" *ngFor="let product of products">
         <ion-card mode="{{settings.settings.mode}}" button="true"
           class="ion-activatable ion-focusable hydrated {{settings.settings.product_shadow}}"
-          [style.border-radius.px]="settings.dimensions.productBorderRadius" (click)="getProduct(product)">
+          [style.border-radius.px]="settings.dimensions.productBorderRadius">
           <ion-img alt="" [style.height.px]="settings.dimensions.productsGridViewHeight" *ngIf="product.images?.length"
-            src="{{product.images[0].src}}"></ion-img>
+            src="{{product.images[0].src}}" (click)="getProduct(product)"></ion-img>
           <ion-img alt="" [style.height.px]="settings.dimensions.productsGridViewHeight" *ngIf="!product.images?.length"
-            src="assets/image/logo.png"></ion-img>
+            src="assets/image/logo.png" (click)="getProduct(product)"></ion-img>
           <ion-icon name="heart-outline" mode="md" class="wishlist-button-grid" *ngIf="!settings.wishlist[product.id]"
             (click)="settings.addToWishlist(product.id); $event.stopPropagation()"></ion-icon>
           <ion-icon name="heart" color="{{settings.theme.button}}" mode="md" class="wishlist-button-grid"
@@ -59,13 +59,24 @@
           <p *ngIf="product.weight_html!='N/A'" style="font-size:14px;margin:-5px 0px 0px 10px;color:#000;">
             {{product.weight_html}}</p>
           <ion-card-content class="ion-activatable ion-focusable hydrated">
-            <p class="price">
+            <p class="price" style="display: flex;
+            justify-content: space-around;align-items: center;">
               <span class="regular-price" *ngIf="!product.sale_price" [innerHTML]="product.formated_price"></span>
               <span class="regular-price" *ngIf="product.formated_sales_price"
                 [innerHTML]="product.formated_sales_price"></span>
               <del><span *ngIf="product.sale_price" class="special-price"
                   [innerHTML]="product.formated_price"></span></del>
+              <button style="
+                  background: #3bb77e;
+                  border-radius: 4px;
+                  color: white;
+                  font-size: 8px;
+                  width: 62px;
+                  height: 20px;" class="add-to-cart-button" (click)="addToCart(product)">{{"ADD TO CART"
+                |translate}}
+              </button>
             </p>
+
           </ion-card-content>
         </ion-card>
       </ion-col>

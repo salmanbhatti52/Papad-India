@@ -34,9 +34,17 @@ export class Config {
         // this.consumerKey = 'ck_6f5f858bdaf13458dca896ef62d58c4bfda2fed5';
         // this.consumerSecret = 'cs_680d821c15f0d1ef472d4fab29f4a4dcd3f87831';
 
+        // new one
+        // ck_61d1f06a830e31e1ef4228562991a09e9768fde8
+        // cs_af6154fe5650100ffd092eda555b87f5f8e3351c
+
+        // oldone
+        // ck_29d08e77b3e9fb13dc8f3a6ee11220b6bb37dcef
+        // s_5cf856bdb9e17d4d2c6f61403095ee41b8d172ea
+
         this.url = 'https://papadindia.com/';
-        this.consumerKey = 'ck_29d08e77b3e9fb13dc8f3a6ee11220b6bb37dcef';
-        this.consumerSecret = 's_5cf856bdb9e17d4d2c6f61403095ee41b8d172ea';
+        this.consumerKey = 'ck_61d1f06a830e31e1ef4228562991a09e9768fde8';
+        this.consumerSecret = 'cs_af6154fe5650100ffd092eda555b87f5f8e3351c';
 
         // this.url = 'https://i-nutrition.ro/';
         // this.consumerKey = 'ck_1dcf1dc6b10a8db2e4c79f74f8a2d5023fc5dbef';
