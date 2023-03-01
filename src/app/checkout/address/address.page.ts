@@ -17,7 +17,7 @@ export class CheckoutAddressPage implements OnInit {
     constructor(public api: ApiService, public checkoutData: CheckoutData, public router: Router, public navCtrl: NavController, public settings: Settings, public route: ActivatedRoute) { }
 
     ionViewWillEnter() {
-        alert('wiilenter')
+
 
     }
     ngOnInit() {
