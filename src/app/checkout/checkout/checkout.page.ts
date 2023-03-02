@@ -33,6 +33,8 @@ export class CheckoutPage implements OnInit {
     stripeForm: any = {};
     constructor(private oneSignal: OneSignal, public toastController: ToastController, public platform: Platform, public api: ApiService, public checkoutData: CheckoutData, public settings: Settings, public router: Router, public iab: InAppBrowser, public loadingController: LoadingController, public navCtrl: NavController, public route: ActivatedRoute/*, private braintree: Braintree*/) { }
     ngOnInit() {
+
+
         this.updateOrder();
 
         this.checkoutData.form.billing_numero_rue = '543254';
@@ -126,7 +128,7 @@ export class CheckoutPage implements OnInit {
         }
     }
     handleOrder() {
-        alert('handle order');
+
         if (this.results.result == 'success') {
             if (this.checkoutData.form.payment_method == 'wallet' || this.checkoutData.form.payment_method == 'paypalpro' || this.checkoutData.form.payment_method == 'stripe' || this.checkoutData.form.payment_method == 'bacs' || this.checkoutData.form.payment_method == 'cheque' || this.checkoutData.form.payment_method == 'cod' || this.checkoutData.form.payment_method == 'authnet') {
                 this.orderSummary(this.results.redirect);
