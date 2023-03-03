@@ -26,6 +26,7 @@ export class AccountPage {
     }
     async log_out() {
         this.settings.customer.id = undefined;
+        localStorage.removeItem('userId');
         this.settings.vendor = false;
         this.settings.administrator = false;
         this.settings.wishlist = [];

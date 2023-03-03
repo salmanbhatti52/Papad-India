@@ -37,6 +37,7 @@ export class LoginPage implements OnInit {
     userInfo: any;
     phoneVerificationError: any;
     loading: any;
+    val: any;
     constructor(public modalCtrl: ModalController, public navParams: NavParams, public platform: Platform, private oneSignal: OneSignal, public api: ApiService, public settings: Settings, public loadingController: LoadingController, public router: Router, public navCtrl: NavController, private fb: FormBuilder, private googlePlus: GooglePlus, private facebook: Facebook) {
         this.form = this.fb.group({
             username: ['', Validators.required],
@@ -77,7 +78,10 @@ export class LoginPage implements OnInit {
                     });
                 }
             } else if (this.status.data) {
+
                 this.settings.customer.id = this.status.ID;
+
+                localStorage.setItem('userId', this.status.ID);
                 if (this.platform.is('cordova')) {
                     this.oneSignal.getIds().then((data: any) => {
                         this.form.onesignal_user_id = data.userId;
@@ -265,6 +269,7 @@ export class LoginPage implements OnInit {
             }
             else if (this.status.data != undefined) {
                 this.settings.customer.id = this.status.ID;
+                localStorage.setItem('userId', this.status.ID);
                 if (this.platform.is('cordova'))
                     this.oneSignal.getIds().then((data: any) => {
                         this.pushForm.onesignal_user_id = data.userId;

@@ -25,10 +25,13 @@ export class ForgottenPage implements OnInit {
             email: ['', '']
         });
     }
-    ngOnInit() {}
+    ngOnInit() {
+
+
+    }
     close() {
         this.modalCtrl.dismiss({
-          'loggedIn': false,
+            'loggedIn': false,
         });
     }
     async forgotten() {

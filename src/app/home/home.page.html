@@ -53,7 +53,7 @@
 
       <!-- Banner Slider -->
       <div *ngIf="children.children?.length && children.style == 'slider'">
-        <ion-slides style="line-height: 0;" pager="true" dir="{{settings.dir}}" class="bannner">
+        <ion-slides style="line-height: 0;" pager="true" dir="{{settings.dir}}" class="bannner" [options]="slideOpts">
           <ion-slide *ngFor="let image of children.children">
             <div class="ion-activatable ripple-parent">
               <img class="{{children.banner_shadow}}" src="{{image.image}}" [style.width.px]="screenWidth"

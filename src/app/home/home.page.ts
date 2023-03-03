@@ -19,9 +19,11 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class HomePage {
     slideOpts = {
-        slidesPerView: 1.5,
+        slidesPerView: 1,
         //spaceBetween: 10,
         freeMode: true,
+        speed: 3000,
+        autoplay: true,
         coverflowEffect: {
             rotate: 50,
             stretch: 0,
@@ -42,7 +44,18 @@ export class HomePage {
         this.filter.status = 'publish';
         this.screenWidth = this.platform.width();
     }
+
+    ionViewWillEnter() {
+        if (localStorage.getItem('userId') == null || localStorage.getItem('userId') === undefined) {
+            this.settings.customer.id = undefined;
+        } else {
+            this.settings.customer.id = localStorage.getItem('userId');
+        }
+
+
+    }
     ngOnInit() {
+
         this.platform.ready().then(() => {
             this.nativeStorage.getItem('/settings').then((settings: any) => {
                 this.config.lang = settings.lang;
