@@ -25,8 +25,9 @@ ion-card-content {
         .special-price {
             //color: #868686;
             padding-left: 5px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 300;
+            text-decoration: line-through;
         }
     }
 }
@@ -82,8 +83,9 @@ ion-card-title{
     }
     .special-price {
         padding-left: 5px;
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 400;
+        text-decoration: line-through;
     }
     .add-to-cart-button {
         margin: 16px;
@@ -138,8 +140,9 @@ ion-card-title{
             .special-price {
                 //color: #868686;
                 padding-left: 5px;
-                font-size: 10px;
+                font-size: 12px;
                 font-weight: 300;
+                text-decoration: line-through;
             }
         }
         .related-item-name {

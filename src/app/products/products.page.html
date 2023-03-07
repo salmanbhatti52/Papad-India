@@ -64,8 +64,7 @@
               <span class="regular-price" *ngIf="!product.sale_price" [innerHTML]="product.formated_price"></span>
               <span class="regular-price" *ngIf="product.formated_sales_price"
                 [innerHTML]="product.formated_sales_price"></span>
-              <del><span *ngIf="product.sale_price" class="special-price"
-                  [innerHTML]="product.formated_price"></span></del>
+              <span *ngIf="product.sale_price" class="special-price" [innerHTML]="product.formated_price"></span>
               <button style="
                   background: #3bb77e;
                   border-radius: 4px;

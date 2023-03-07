@@ -62,8 +62,12 @@
          <ion-label *ngIf="product.weight_html!='N/A'" style="margin-left: 15px;">{{product.weight_html}}</ion-label>
          <ion-item lines="none">
             <ion-label *ngIf="product.sale_price">
-               <span class="price" [innerHTML]="product.formated_sales_price"></span><del><span class="special-price"
-                     [innerHTML]="product.formated_price"></span></del>
+               <span class="price" [innerHTML]="product.formated_sales_price"></span>
+
+               <span class="special-price" [innerHTML]="product.formated_price">
+               </span>
+
+
                <span *ngIf="((product.regular_price - product.price) /product.regular_price*100) >= 1"
                   class="percent-off">{{(product.regular_price - product.price) /product.regular_price*100 | number :
                   '1.0-0'}}% OFF</span>
