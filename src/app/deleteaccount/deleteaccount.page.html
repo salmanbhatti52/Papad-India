@@ -1,0 +1,41 @@
+<ion-header mode="ios" mode='ios'>
+  <ion-toolbar style="   padding-top: 28px !important;
+  padding-bottom: 0px;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/account"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Delete Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+
+  <div class="wrapper">
+    <div class="thead">Why do you want to delete your account?</div>
+    <div class="flex-c" *ngFor="let checkboxes of Checkboxes">
+      <ion-checkbox mode="md" class="check" [(ngModel)]="checkboxes.isItemChecked"
+        (ionChange)="verifyEvent(checkboxes)">
+      </ion-checkbox>
+      <span class="lbl">{{checkboxes.question}}</span>
+    </div>
+
+    <div style="color:#000;margin-top: 10%;
+    font-size: 14px;">Commnets(optional)</div>
+
+    <ion-textarea rows="10" cols="5" class="desc-area" placeholder="Please provide additional information here..."
+      [(ngModel)]="desc"></ion-textarea>
+
+    <!-- <ion-button class=" btn" (click)="delete()">Delete</ion-button> -->
+    <div style="width: 90%; margin: 10% auto;">
+
+    </div>
+    <button style="    width:100%;
+         padding: 20px;
+         background:#3bb77e;
+         border-radius: 10px;
+         color:white ;" class="add-to-cart-button" expand="block" (click)="delete()">Delete</button>
+  </div>
+
+
+</ion-content>

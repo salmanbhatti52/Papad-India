@@ -149,6 +149,13 @@
       <ion-label>{{"Logout" | translate}}</ion-label>
     </ion-item>
 
+    <ion-item (click)="goTo('deleteaccount')" detail="true" lines="inset" *ngIf="settings.customer?.id"
+      class="ion-activatable">
+      <ion-icon style="background-color: var(--ion-color-danger, #eb445a); color: white"
+        class="icon-start ion-margin-end" name="trash" mode="md" slot="start"></ion-icon>
+      <ion-label>{{"Delete Account" | translate}}</ion-label>
+    </ion-item>
+
     <ion-item class="ion-activatable">
       <ion-icon style="background-color: var(--ion-color-primary, #428xff); color: white"
         class="icon-start ion-margin-end" slot="start" name="moon" mode="md" slot="start"></ion-icon>
